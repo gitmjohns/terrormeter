@@ -12,15 +12,6 @@ interface TerrorMeterProps {
 // Canvas geometry — matches reference HTML exactly
 const GW = 320, GH = 175, CX = 160, CY = 165, R = 130, IR = 65;
 
-const ZONES = [
-  { from: 0,     to: 14.28, color: "#cc0000" },
-  { from: 14.28, to: 28.57, color: "#dd3300" },
-  { from: 28.57, to: 42.85, color: "#d4a017" },
-  { from: 42.85, to: 57.14, color: "#ccaa00" },
-  { from: 57.14, to: 71.42, color: "#88cc00" },
-  { from: 71.42, to: 85.71, color: "#44cc22" },
-  { from: 85.71, to: 100,   color: "#22c55e" },
-];
 
 const VERDICTS = [
   { min: 0,  max: 14,  label: "Truly Terrible",   color: "#cc0000" },
@@ -56,17 +47,18 @@ function drawGauge(canvas: HTMLCanvasElement, val: number) {
   ctx.fillStyle = "#1a1a1a";
   ctx.fill();
 
-  // Colour zones
-  ZONES.forEach((z) => {
-    const sa = Math.PI + (z.from / 100) * Math.PI;
-    const ea = Math.PI + (z.to / 100) * Math.PI;
-    ctx.beginPath();
-    ctx.arc(CX, CY, R, sa, ea, false);
-    ctx.arc(CX, CY, IR, ea, sa, true);
-    ctx.closePath();
-    ctx.fillStyle = z.color;
-    ctx.fill();
-  });
+  // Single gradient arc — left (#cc0000) to right (#22c55e), no segment lines
+  const gr = ctx.createLinearGradient(CX - R, CY, CX + R, CY);
+  gr.addColorStop(0,    "#cc0000");
+  gr.addColorStop(0.35, "#d4a017");
+  gr.addColorStop(0.65, "#88cc00");
+  gr.addColorStop(1,    "#22c55e");
+  ctx.beginPath();
+  ctx.arc(CX, CY, R,  Math.PI, 0,        false);
+  ctx.arc(CX, CY, IR, 0,       Math.PI,  true);
+  ctx.closePath();
+  ctx.fillStyle = gr;
+  ctx.fill();
 
   // Outer border
   ctx.beginPath();
