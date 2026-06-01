@@ -61,6 +61,91 @@ body::after {
   background: #d4a017;
 }
 
+/* VHS Gothic — scoped only to TerrorMeter LCD display */
+@font-face {
+  font-family: 'VHSGothic';
+  src: url('/fonts/vhs-gothic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* TerrorMeter LCD display */
+.tm-lcd-wrap {
+  background: #0a1a0a;
+  border: 2px solid #1a3a1a;
+  border-radius: 4px;
+  padding: 8px 12px;
+  width: 60%;
+  text-align: center;
+  margin: 14px auto 0;
+  position: relative;
+  overflow: hidden;
+}
+.tm-lcd-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.02) 2px,
+    rgba(0, 255, 0, 0.02) 4px
+  );
+  pointer-events: none;
+}
+.tm-lcd-text {
+  font-family: 'VHSGothic', 'Courier New', monospace;
+  font-size: 20px;
+  letter-spacing: 2px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* TerrorMeter range slider */
+.tm-slider input[type='range'] {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #1a1a1a;
+  border-radius: 3px;
+  outline: none;
+  border: 1px solid #444;
+}
+.tm-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 28px;
+  background: linear-gradient(180deg, #999 0%, #666 40%, #555 60%, #777 100%);
+  border-radius: 3px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  clip-path: polygon(15% 0%, 85% 0%, 100% 10%, 100% 90%, 85% 100%, 15% 100%, 0% 90%, 0% 10%);
+}
+.tm-slider input[type='range']::-moz-range-thumb {
+  width: 16px;
+  height: 28px;
+  background: linear-gradient(180deg, #999 0%, #666 40%, #555 60%, #777 100%);
+  border-radius: 3px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+}
+.tm-slider input[type='range']:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.tm-slider input[type='range']:disabled::-webkit-slider-thumb {
+  cursor: default;
+}
+
 /* Rating slider custom styles */
 .rating-track {
   background: linear-gradient(to right, #cc0000, #d4a017, #ffffff);
