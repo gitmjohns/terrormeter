@@ -87,7 +87,7 @@ function drawGauge(canvas: HTMLCanvasElement, val: number) {
   ctx.translate(CX, CY);
   ctx.rotate(na);
   ctx.beginPath();
-  ctx.moveTo(-20, 0);
+  ctx.moveTo(0, 0);
   ctx.lineTo(nl - 12, -3.5);
   ctx.lineTo(nl, 0);
   ctx.lineTo(nl - 12, 3.5);
