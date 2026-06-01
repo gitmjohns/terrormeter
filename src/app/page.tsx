@@ -87,7 +87,7 @@ async function SpookyGoat({ isLoggedIn, watchlistIds }: RowProps) {
   );
 }
 
-// ─── Row 2: Buried Treasures ─────────────────────────────────────────────────
+// ─── Row 2: Buried Terrors ─────────────────────────────────────────────────
 
 async function CultClassics({ isLoggedIn, watchlistIds }: RowProps) {
   const titles = await getCultClassics(6);
@@ -95,7 +95,7 @@ async function CultClassics({ isLoggedIn, watchlistIds }: RowProps) {
   return (
     <section className="py-10 border-t border-shadow">
       <SectionHeader
-        title="Buried Treasures"
+        title="Buried Terrors"
         sub="Overlooked, underseen, and worth every scream"
       />
       <TitleGrid titles={titles} isLoggedIn={isLoggedIn} watchlistIds={watchlistIds} />
