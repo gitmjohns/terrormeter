@@ -23,13 +23,13 @@ const ZONES = [
 ];
 
 const VERDICTS = [
-  { min: 0,  max: 14,  label: "TERRIBLE",   color: "#cc0000" },
-  { min: 15, max: 29,  label: "AWFUL",       color: "#dd3300" },
-  { min: 30, max: 44,  label: "KINDA BAD",   color: "#d4a017" },
-  { min: 45, max: 59,  label: "MEH-DIOCRE",  color: "#ccaa00" },
-  { min: 60, max: 74,  label: "CREEPY",      color: "#88cc00" },
-  { min: 75, max: 89,  label: "SCARY",       color: "#44cc22" },
-  { min: 90, max: 100, label: "TERRIFYING",  color: "#22c55e" },
+  { min: 0,  max: 14,  label: "Truly Terrible",   color: "#cc0000" },
+  { min: 15, max: 29,  label: "Pretty Awful",      color: "#dd3300" },
+  { min: 30, max: 44,  label: "Kinda Bad",         color: "#d4a017" },
+  { min: 45, max: 59,  label: "Meh-diocre",        color: "#ccaa00" },
+  { min: 60, max: 74,  label: "Kinda Creepy",      color: "#88cc00" },
+  { min: 75, max: 89,  label: "Pretty Scary",      color: "#44cc22" },
+  { min: 90, max: 100, label: "Truly Terrifying",  color: "#22c55e" },
 ];
 
 function getVerdict(val: number) {
@@ -133,6 +133,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   const [displayCount, setDisplayCount] = useState(initialScore ?? 0);
   const [submissionCount, setSubmissionCount] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fontReady, setFontReady] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const router = useRouter();
@@ -142,16 +143,27 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   // Indicator lights (thresholds match reference)
   const lightsOn = [score <= 44, score >= 30 && score <= 74, score >= 60];
 
-  // LCD content — empty until user interacts; verdict label while choosing; score after submit
+  // LCD content — hidden until VHS Gothic confirms loaded, then:
+  // empty until first interaction, verdict label while choosing, score after submit.
   const activeScore = submitted ? submittedScoreRef.current : score;
   const verdict = getVerdict(activeScore);
-  const lcdText = submitted
+  const lcdText = !fontReady
+    ? ""
+    : submitted
     ? `${displayCount}/100`
     : interacted
     ? verdict.label
     : "";
   const lcdColor = submitted || interacted ? verdict.color : "#33cc33";
   const lcdShadow = `0 0 ${submitted ? "10" : "8"}px ${lcdColor}88`;
+
+  // Confirm VHS Gothic is loaded before showing any LCD text — prevents
+  // the fallback-font flash that occurs with font-display: swap.
+  useEffect(() => {
+    document.fonts.load('14px "VHSGothic"')
+      .then(() => setFontReady(true))
+      .catch(() => setFontReady(true)); // show text even if load fails
+  }, []);
 
   // Redraw gauge when score or submit state changes
   useEffect(() => {
