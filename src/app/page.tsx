@@ -146,7 +146,7 @@ async function SubgenreSpotlight({ isLoggedIn, watchlistIds }: RowProps) {
   return (
     <section className="py-10 border-t border-shadow">
       <SectionHeader
-        title={`Weekly Possession: ${spotlight.display}`}
+        title={`Weekly Terrors: ${spotlight.display}`}
         sub="Weekly rotating subgenre spotlight"
         href={`/movies?genre=${encodeURIComponent(spotlight.db)}`}
       />

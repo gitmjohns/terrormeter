@@ -16,7 +16,7 @@ export async function getGoats(limit = 20): Promise<Title[]> {
     const s = await db();
     const { data } = await s.from("titles").select("*").eq("media_type", "movie")
       .gte("critic_score", 85)
-      .lt("release_year", 2000)
+      .lt("release_year", 2018)
       .order("critic_score", { ascending: false })
       .limit(50);
     if (!data?.length) return [];

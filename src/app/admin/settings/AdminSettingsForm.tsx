@@ -23,7 +23,7 @@ export function AdminSettingsForm({ currentSubgenre }: { currentSubgenre: string
 
   return (
     <div>
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4">Weekly Possession Spotlight</h2>
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4">Weekly Terrors Spotlight</h2>
       <div className="bg-tomb border border-shadow rounded-xl p-5 space-y-4">
         <p className="text-sm text-specter">
           Override the auto-rotating weekly subgenre spotlight on the homepage.
