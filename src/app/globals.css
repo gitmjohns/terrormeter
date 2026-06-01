@@ -97,7 +97,7 @@ body::after {
 }
 .tm-lcd-text {
   font-family: 'VHSGothic', 'Courier New', monospace;
-  font-size: 14px;
+  font-size: clamp(9px, 2.8vw, 14px);
   letter-spacing: 1px;
   min-height: 28px;
   display: flex;
