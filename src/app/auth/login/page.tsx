@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -34,9 +35,22 @@ const PROVIDERS: { id: Provider; label: string; bg: string; hover: string; icon:
   },
 ];
 
+const ERROR_MESSAGES: Record<string, string> = {
+  auth_failed: "Sign in failed. Please try again.",
+  access_denied: "Access was denied. Please try again.",
+};
+
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) {
+      setError(ERROR_MESSAGES[urlError] ?? "Sign in failed. Please try again.");
+    }
+  }, [searchParams]);
 
   async function signInWith(provider: Provider) {
     setLoading(provider);
@@ -45,7 +59,11 @@ export default function LoginPage() {
     const origin = window.location.origin.replace(/^(https?:\/\/)www\./, "$1");
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${origin}/auth/callback` },
+      options: {
+        redirectTo: `${origin}/auth/callback`,
+        // Request email explicitly — required for Discord to return email data
+        ...(provider === "discord" && { scopes: "identify email" }),
+      },
     });
     if (error) {
       setError(error.message);
