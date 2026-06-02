@@ -335,7 +335,7 @@ export default async function ProfilePage({ params, searchParams }: PageProps) {
                         <div className="w-full h-full flex items-center justify-center text-2xl">💀</div>
                       )}
                       <div
-                        className="font-score absolute top-1 right-1 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow"
+                        className="font-score absolute top-2 right-2 px-2 py-0.5 rounded-md text-xs font-bold"
                         style={{ backgroundColor: badgeColor, color: "#ffffff" }}
                       >
                         {r.score}
@@ -424,7 +424,7 @@ export default async function ProfilePage({ params, searchParams }: PageProps) {
                       </Link>
                       <div className="flex items-center gap-2 mt-0.5">
                         {w.title.release_year && <span className="text-xs text-muted">{w.title.release_year}</span>}
-                        <span className="font-score text-xs font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(10,10,10,0.85)", color: badgeColorW }}>
+                        <span className="font-score text-xs font-bold px-2 py-0.5 rounded-md" style={{ backgroundColor: badgeColorW, color: "#ffffff" }}>
                           {Math.round(combinedScore)}
                         </span>
                         {w.watched && (
