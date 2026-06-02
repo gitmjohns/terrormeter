@@ -159,3 +159,26 @@ body::after {
 .rating-enter {
   animation: ratingEnter 0.7s ease-out forwards;
 }
+
+/* TerrorMeter — pulsing indicator lights */
+@keyframes tm-light-red {
+  0%, 100% { background-color: #cc0000; box-shadow: 0 0 5px #cc000099; }
+  50%       { background-color: #ff2222; box-shadow: 0 0 9px #ff2222bb; }
+}
+@keyframes tm-light-orange {
+  0%, 100% { background-color: #d4a017; box-shadow: 0 0 5px #d4a01799; }
+  50%       { background-color: #ffcc44; box-shadow: 0 0 9px #ffcc44bb; }
+}
+@keyframes tm-light-green {
+  0%, 100% { background-color: #22c55e; box-shadow: 0 0 5px #22c55e99; }
+  50%       { background-color: #44ff88; box-shadow: 0 0 9px #44ff88bb; }
+}
+.tm-light-pulse-0 { animation: tm-light-red    2s ease-in-out infinite; }
+.tm-light-pulse-1 { animation: tm-light-orange 2s ease-in-out infinite; }
+.tm-light-pulse-2 { animation: tm-light-green  2s ease-in-out infinite; }
+
+/* TerrorMeter — metallic panel border glow */
+@keyframes tm-border-glow {
+  0%, 100% { border-color: #555; box-shadow: none; }
+  50%       { border-color: #cc0000; box-shadow: 0 0 12px #cc000055, 0 0 24px #cc000033; }
+}

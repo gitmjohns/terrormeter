@@ -33,7 +33,7 @@ function getBtnColor(val: number): string {
   return "#22c55e";
 }
 
-function drawGauge(canvas: HTMLCanvasElement, val: number) {
+function drawGauge(canvas: HTMLCanvasElement, val: number, offsetRad = 0) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -81,7 +81,7 @@ function drawGauge(canvas: HTMLCanvasElement, val: number) {
   }
 
   // Needle
-  const na = Math.PI + (val / 100) * Math.PI;
+  const na = Math.PI + (val / 100) * Math.PI + offsetRad;
   const nl = R - 16;
   ctx.save();
   ctx.translate(CX, CY);
@@ -131,6 +131,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const submittedScoreRef = useRef(initialScore ?? 0);
+  const shakeOffsetRef = useRef(0);
 
   // Indicator lights (thresholds match reference)
   const lightsOn = [score <= 44, score >= 30 && score <= 74, score >= 60];
@@ -178,6 +179,25 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
     return () => clearInterval(iv);
   }, [submissionCount]);
 
+  // Needle shake after submit — 6 frames over ~600ms
+  useEffect(() => {
+    if (submissionCount === 0) return;
+    const frames = [3, -2, 1.5, -0.8, 0.4, 0];
+    let i = 0;
+    const iv = setInterval(() => {
+      shakeOffsetRef.current = (frames[i] ?? 0) * (Math.PI / 180);
+      if (canvasRef.current) {
+        drawGauge(canvasRef.current, submittedScoreRef.current, shakeOffsetRef.current);
+      }
+      i++;
+      if (i >= frames.length) {
+        shakeOffsetRef.current = 0;
+        clearInterval(iv);
+      }
+    }, 100);
+    return () => clearInterval(iv);
+  }, [submissionCount]);
+
   function handleSubmit() {
     setSubmitError(null);
     startTransition(async () => {
@@ -220,7 +240,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
       </div>
 
       {/* Metal panel */}
-      <div style={{ width: "100%", background: "linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 40%,#1e1e1e 60%,#2a2a2a 100%)", border: "2px solid #555", borderRadius: 8, padding: "14px 20px 32px", position: "relative", display: "flex", flexDirection: "column" }}>
+      <div style={{ width: "100%", background: "linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 40%,#1e1e1e 60%,#2a2a2a 100%)", border: "2px solid #555", borderRadius: 8, padding: "14px 20px 32px", position: "relative", display: "flex", flexDirection: "column", animation: "tm-border-glow 3s ease-in-out infinite" }}>
 
         {/* Corner screws */}
         {SCREWS.map((pos, i) => (
@@ -230,7 +250,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
         {/* Indicator lights */}
         <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 14 }}>
           {LIGHTS.map((l, i) => (
-            <div key={i} style={{
+            <div key={i} className={lightsOn[i] ? `tm-light-pulse-${i}` : ""} style={{
               width: 12, height: 12, borderRadius: "50%",
               background: lightsOn[i] ? l.onBg : "#111",
               border: `1.5px solid ${lightsOn[i] ? l.onBorder : "#333"}`,
