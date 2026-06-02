@@ -175,7 +175,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
         </div>
 
         {/* ── TERRORMETER ── */}
-        <div className="mb-8 rounded-xl py-8 px-6" style={{ background: "#111111", border: "2px solid #cc0000" }}>
+        <div className="mb-8 rounded-xl py-8 px-6" style={{ background: "#111111", border: "2px solid #333333" }}>
           {user ? (
             <TerrorMeter titleId={id} initialScore={userRating} />
           ) : (

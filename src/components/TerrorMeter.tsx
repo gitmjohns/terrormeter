@@ -33,7 +33,7 @@ function getBtnColor(val: number): string {
   return "#22c55e";
 }
 
-function drawGauge(canvas: HTMLCanvasElement, val: number, offsetRad = 0) {
+function drawGauge(canvas: HTMLCanvasElement, val: number) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -81,7 +81,7 @@ function drawGauge(canvas: HTMLCanvasElement, val: number, offsetRad = 0) {
   }
 
   // Needle
-  const na = Math.PI + (val / 100) * Math.PI + offsetRad;
+  const na = Math.PI + (val / 100) * Math.PI;
   const nl = R - 16;
   ctx.save();
   ctx.translate(CX, CY);
@@ -131,7 +131,6 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const submittedScoreRef = useRef(initialScore ?? 0);
-  const shakeOffsetRef = useRef(0);
 
   // Indicator lights (thresholds match reference)
   const lightsOn = [score <= 44, score >= 30 && score <= 74, score >= 60];
@@ -176,25 +175,6 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
       setDisplayCount(c);
       if (c >= val) clearInterval(iv);
     }, 40);
-    return () => clearInterval(iv);
-  }, [submissionCount]);
-
-  // Needle shake after submit — 6 frames over ~600ms
-  useEffect(() => {
-    if (submissionCount === 0) return;
-    const frames = [3, -2, 1.5, -0.8, 0.4, 0];
-    let i = 0;
-    const iv = setInterval(() => {
-      shakeOffsetRef.current = (frames[i] ?? 0) * (Math.PI / 180);
-      if (canvasRef.current) {
-        drawGauge(canvasRef.current, submittedScoreRef.current, shakeOffsetRef.current);
-      }
-      i++;
-      if (i >= frames.length) {
-        shakeOffsetRef.current = 0;
-        clearInterval(iv);
-      }
-    }, 100);
     return () => clearInterval(iv);
   }, [submissionCount]);
 
@@ -276,7 +256,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
 
         {/* Slider and button */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, paddingTop: 16 }}>
-          <div className="tm-slider" style={{ width: "90%", height: 32, display: "flex", alignItems: "center" }}>
+          <div className="tm-slider" style={{ width: "70%", height: 32, display: "flex", alignItems: "center" }}>
             <input
               type="range"
               min={0}
