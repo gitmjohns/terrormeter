@@ -129,7 +129,7 @@ async function SpookyComedies({ isLoggedIn, watchlistIds }: RowProps) {
     <section className="py-10 border-t border-shadow">
       <SectionHeader
         title="Terrific Comedies"
-        sub="Horror that makes you laugh before it makes you scream"
+        sub="Horror with a sense of humor"
         href="/movies?genre=Comedy+Horror"
       />
       <TitleGrid titles={titles} isLoggedIn={isLoggedIn} watchlistIds={watchlistIds} />
@@ -164,7 +164,7 @@ async function TopHorrorTV({ isLoggedIn, watchlistIds }: RowProps) {
     <section className="py-10 border-t border-shadow">
       <SectionHeader
         title="Televised Terror"
-        sub="Highest rated horror series, anthologies, and limited runs"
+        sub="Horror series, anthologies, and limited runs"
         href="/tv"
       />
       <TitleGrid titles={titles} isLoggedIn={isLoggedIn} watchlistIds={watchlistIds} />
