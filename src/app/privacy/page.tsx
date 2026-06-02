@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — TerrorMeter",
@@ -66,19 +65,6 @@ export default function PrivacyPage() {
           </p>
         </Section>
 
-        <Section heading="Children">
-          <p>This site is not intended for anyone under 13.</p>
-        </Section>
-
-        <Section heading="Contact">
-          <p>
-            For any privacy questions use our{" "}
-            <Link href="/contact" className="text-green-spooky hover:underline">
-              contact form
-            </Link>
-            {" "}at terrormeter.com/contact
-          </p>
-        </Section>
       </div>
     </div>
   );

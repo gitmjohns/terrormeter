@@ -57,8 +57,6 @@ export default function RootLayout({
             <Link href="/privacy" className="hover:text-muted transition-colors">Privacy Policy</Link>
             <span className="text-muted/30">&bull;</span>
             <Link href="/terms" className="hover:text-muted transition-colors">Terms of Service</Link>
-            <span className="text-muted/30">&bull;</span>
-            <Link href="/contact" className="hover:text-muted transition-colors">Contact</Link>
           </div>
           <div className="mt-4 flex flex-col items-center gap-2">
             <a

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service — TerrorMeter",
@@ -25,8 +24,7 @@ export default function TermsPage() {
       <div className="space-y-10">
         <Section heading="Using the Site">
           <p>
-            By using TerrorMeter you agree to these terms. You must be at least 13 years old to
-            use the site.
+            By using TerrorMeter you agree to these terms.
           </p>
         </Section>
 
@@ -68,16 +66,6 @@ export default function TermsPage() {
           <p>
             We may update these terms at any time. Continued use of the site means you accept any
             changes.
-          </p>
-        </Section>
-
-        <Section heading="Contact">
-          <p>
-            For any questions use our{" "}
-            <Link href="/contact" className="text-green-spooky hover:underline">
-              contact form
-            </Link>
-            {" "}at TerrorMeter.com/contact
           </p>
         </Section>
       </div>
