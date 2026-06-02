@@ -118,7 +118,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
                 <div className="bg-tomb border border-shadow rounded-2xl p-4 space-y-3">
                   <div className="text-center pb-3 border-b border-shadow">
                     <div className="text-xs text-muted uppercase tracking-wider mb-1">Overall Score</div>
-                    <div className="font-label font-normal text-xl leading-tight" style={{ color: overallBadgeColor }}>{overallLabel}</div>
+                    <div className="font-verdict text-xl leading-tight" style={{ color: overallBadgeColor }}>{overallLabel}</div>
                     <div className="font-score text-5xl font-black leading-none mt-1" style={{ color: overallBadgeColor }}>
                       {overallScore}
                     </div>
@@ -150,7 +150,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
           <div className="bg-tomb border border-shadow rounded-2xl p-4 space-y-3">
             <div className="text-center pb-3 border-b border-shadow">
               <div className="text-xs text-muted uppercase tracking-wider mb-1">Overall Score</div>
-              <div className="font-label font-bold text-xl leading-tight" style={{ color: overallBadgeColor }}>{overallLabel}</div>
+              <div className="font-verdict text-xl leading-tight" style={{ color: overallBadgeColor }}>{overallLabel}</div>
               <div className="font-score text-5xl font-black leading-none mt-1" style={{ color: overallBadgeColor }}>
                 {overallScore}
               </div>
