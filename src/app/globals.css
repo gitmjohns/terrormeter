@@ -76,7 +76,7 @@ body::after {
   border: 2px solid #1a3a1a;
   border-radius: 4px;
   padding: 0 8px;
-  width: 60%;
+  width: 190px;
   margin: 14px auto 0;
   position: relative;
   overflow: hidden;
@@ -236,5 +236,4 @@ body::after {
   padding: 10px 20px 10px 16px;
 }
 
-/* LCD fills full width when inside the desktop right column */
-.tm-right-col .tm-lcd-wrap { width: 100%; }
+/* LCD fixed width — must not be overridden; 190px fits the longest label */
