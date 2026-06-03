@@ -30,8 +30,8 @@ export default function TermsPage() {
 
         <Section heading="Your Account">
           <p>
-            You are responsible for your account and all activity under it. Contact us immediately
-            if you believe your account has been compromised.
+            You are responsible for your account and all activity under it. Change your password
+            immediately if you believe your account has been compromised.
           </p>
         </Section>
 

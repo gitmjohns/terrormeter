@@ -53,8 +53,8 @@ export default function PrivacyPage() {
 
         <Section heading="Your Data">
           <p>
-            You can request access to, correction of, or deletion of your data at any time by
-            contacting us. If you delete your account your data will be removed.
+            You can delete your account at any time from your account settings to have your data
+            removed.
           </p>
         </Section>
 
