@@ -12,7 +12,6 @@ interface TerrorMeterProps {
 // Canvas geometry — matches reference HTML exactly
 const GW = 320, GH = 175, CX = 160, CY = 165, R = 130, IR = 65;
 
-
 const VERDICTS = [
   { min: 0,  max: 14,  label: "Truly Terrible",   color: "#cc0000" },
   { min: 15, max: 29,  label: "Pretty Awful",      color: "#dd3300" },
@@ -54,8 +53,8 @@ function drawGauge(canvas: HTMLCanvasElement, val: number) {
   gr.addColorStop(0.65, "#88cc00");
   gr.addColorStop(1,    "#22c55e");
   ctx.beginPath();
-  ctx.arc(CX, CY, R,  Math.PI, 0,        false);
-  ctx.arc(CX, CY, IR, 0,       Math.PI,  true);
+  ctx.arc(CX, CY, R,  Math.PI, 0,       false);
+  ctx.arc(CX, CY, IR, 0,       Math.PI, true);
   ctx.closePath();
   ctx.fillStyle = gr;
   ctx.fill();
@@ -130,6 +129,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
 
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const desktopCanvasRef = useRef<HTMLCanvasElement>(null);
   const submittedScoreRef = useRef(initialScore ?? 0);
 
   // Indicator lights (thresholds match reference)
@@ -154,14 +154,14 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   useEffect(() => {
     document.fonts.load('14px "VHSGothic"')
       .then(() => setFontReady(true))
-      .catch(() => setFontReady(true)); // show text even if load fails
+      .catch(() => setFontReady(true));
   }, []);
 
-  // Redraw gauge when score or submit state changes
+  // Redraw both canvases (mobile + desktop) when score or submit state changes
   useEffect(() => {
-    if (canvasRef.current) {
-      drawGauge(canvasRef.current, submitted ? submittedScoreRef.current : score);
-    }
+    const val = submitted ? submittedScoreRef.current : score;
+    if (canvasRef.current) drawGauge(canvasRef.current, val);
+    if (desktopCanvasRef.current) drawGauge(desktopCanvasRef.current, val);
   }, [score, submitted, submissionCount]);
 
   // Count-up animation after submit
@@ -208,8 +208,48 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   const btnBg = btnDisabled ? "#333" : getBtnColor(score);
   const btnColor = btnDisabled ? "#666" : "#fff";
 
+  const sliderEl = (
+    <div className="tm-slider" style={{ width: "70%", height: 32, display: "flex", alignItems: "center" }}>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={1}
+        value={score}
+        disabled={submitted || disabled}
+        onChange={(e) => {
+          if (!submitted && !disabled) {
+            setInteracted(true);
+            setScore(Number(e.target.value));
+          }
+        }}
+      />
+    </div>
+  );
+
+  const lightsEl = (gap: number) => (
+    <div style={{ display: "flex", justifyContent: "center", gap }}>
+      {LIGHTS.map((l, i) => (
+        <div key={i} className={lightsOn[i] ? `tm-light-pulse-${i}` : ""} style={{
+          width: 12, height: 12, borderRadius: "50%",
+          background: lightsOn[i] ? l.onBg : "#111",
+          border: `1.5px solid ${lightsOn[i] ? l.onBorder : "#333"}`,
+          transition: "background 0.15s, border-color 0.15s",
+        }} />
+      ))}
+    </div>
+  );
+
+  const lcdEl = (
+    <div className="tm-lcd-wrap">
+      <div className="tm-lcd-text" style={{ color: lcdColor, textShadow: lcdShadow }}>
+        {lcdText}
+      </div>
+    </div>
+  );
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: "100%", maxWidth: 440, margin: "0 auto" }}>
+    <div className="tm-outer" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: "100%", maxWidth: 440, margin: "0 auto" }}>
 
       {/* Title */}
       <div style={{ fontFamily: "var(--font-label, 'Oswald', sans-serif)", fontSize: 11, fontWeight: 400, letterSpacing: 4, textTransform: "uppercase", color: "#888", textAlign: "center" }}>
@@ -220,87 +260,112 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
       </div>
 
       {/* Metal panel */}
-      <div style={{ width: "100%", background: "linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 40%,#1e1e1e 60%,#2a2a2a 100%)", border: "2px solid #555", borderRadius: 8, padding: "14px 20px 32px", position: "relative", display: "flex", flexDirection: "column", animation: "tm-border-glow 3s ease-in-out infinite" }}>
+      <div className="tm-panel-desktop" style={{ width: "100%", background: "linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 40%,#1e1e1e 60%,#2a2a2a 100%)", border: "2px solid #555", borderRadius: 8, padding: "14px 20px 32px", position: "relative", display: "flex", flexDirection: "column", animation: "tm-border-glow 3s ease-in-out infinite" }}>
 
         {/* Corner screws */}
         {SCREWS.map((pos, i) => (
           <div key={i} style={{ position: "absolute", ...pos, width: 10, height: 10, borderRadius: "50%", background: "radial-gradient(circle at 35% 35%, #666, #333)", border: "1px solid #222" }} />
         ))}
 
-        {/* Indicator lights */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 14 }}>
-          {LIGHTS.map((l, i) => (
-            <div key={i} className={lightsOn[i] ? `tm-light-pulse-${i}` : ""} style={{
-              width: 12, height: 12, borderRadius: "50%",
-              background: lightsOn[i] ? l.onBg : "#111",
-              border: `1.5px solid ${lightsOn[i] ? l.onBorder : "#333"}`,
-              transition: "background 0.15s, border-color 0.15s",
-            }} />
-          ))}
-        </div>
+        {/* ── MOBILE LAYOUT (hidden ≥ 768px) ── */}
+        <div className="tm-mobile-inner">
+          {/* Indicator lights */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 14 }}>
+            {LIGHTS.map((l, i) => (
+              <div key={i} className={lightsOn[i] ? `tm-light-pulse-${i}` : ""} style={{
+                width: 12, height: 12, borderRadius: "50%",
+                background: lightsOn[i] ? l.onBg : "#111",
+                border: `1.5px solid ${lightsOn[i] ? l.onBorder : "#333"}`,
+                transition: "background 0.15s, border-color 0.15s",
+              }} />
+            ))}
+          </div>
 
-        {/* Gauge canvas */}
-        <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: -4 }}>
-          <canvas ref={canvasRef} width={GW} height={GH} style={{ width: "100%", maxWidth: GW, height: "auto" }} />
-        </div>
+          {/* Gauge canvas */}
+          <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: -4 }}>
+            <canvas ref={canvasRef} width={GW} height={GH} style={{ width: "100%", maxWidth: GW, height: "auto" }} />
+          </div>
 
-        {/* LCD display — VHSGothic font only here */}
-        <div className="tm-lcd-wrap">
-          <div className="tm-lcd-text" style={{ color: lcdColor, textShadow: lcdShadow }}>
-            {lcdText}
+          {/* LCD display */}
+          {lcdEl}
+
+          {/* Divider */}
+          <div style={{ width: "100%", height: 1, background: "#333", marginTop: 16 }} />
+
+          {/* Slider and button */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, paddingTop: 16 }}>
+            {sliderEl}
+
+            {submitError && (
+              <p style={{ fontSize: 11, color: "#cc0000", textAlign: "center", margin: 0 }}>
+                {submitError}
+              </p>
+            )}
+
+            {!disabled && (
+              <button
+                onClick={handleSubmit}
+                disabled={btnDisabled}
+                style={{
+                  fontFamily: "var(--font-label, 'Oswald', sans-serif)",
+                  fontSize: 12, fontWeight: 600, letterSpacing: 2,
+                  textTransform: "uppercase",
+                  padding: "9px 28px",
+                  color: btnColor, border: "none",
+                  cursor: btnDisabled ? "default" : "pointer",
+                  borderRadius: 2, background: btnBg, transition: "background 0.3s",
+                }}
+              >
+                {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit Verdict"}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Divider */}
-        <div style={{ width: "100%", height: 1, background: "#333", marginTop: 16 }} />
+        {/* ── DESKTOP LAYOUT (hidden < 768px) ── */}
+        <div className="tm-desktop-inner">
 
-        {/* Slider and button */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, paddingTop: 16 }}>
-          <div className="tm-slider" style={{ width: "70%", height: 32, display: "flex", alignItems: "center" }}>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              value={score}
-              disabled={submitted || disabled}
-              onChange={(e) => {
-                if (!submitted && !disabled) {
-                  setInteracted(true);
-                  setScore(Number(e.target.value));
-                }
-              }}
-            />
+          {/* Left column: gauge + slider */}
+          <div className="tm-left-col">
+            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+              <canvas ref={desktopCanvasRef} width={GW} height={GH} style={{ width: "100%", maxWidth: GW, height: "auto" }} />
+            </div>
+            {sliderEl}
           </div>
 
-          {submitError && (
-            <p style={{ fontSize: 11, color: "#cc0000", textAlign: "center", margin: 0 }}>
-              {submitError}
-            </p>
-          )}
+          {/* Vertical divider */}
+          <div className="tm-vdivider" />
 
-          {!disabled && (
-            <button
-              onClick={handleSubmit}
-              disabled={btnDisabled}
-              style={{
-                fontFamily: "var(--font-label, 'Oswald', sans-serif)",
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: 2,
-                textTransform: "uppercase",
-                padding: "9px 28px",
-                color: btnColor,
-                border: "none",
-                cursor: btnDisabled ? "default" : "pointer",
-                borderRadius: 2,
-                background: btnBg,
-                transition: "background 0.3s",
-              }}
-            >
-              {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit Verdict"}
-            </button>
-          )}
+          {/* Right column: lights + LCD + submit */}
+          <div className="tm-right-col">
+            {lightsEl(14)}
+            {lcdEl}
+            <div style={{ width: "100%" }}>
+              {submitError && (
+                <p style={{ fontSize: 11, color: "#cc0000", textAlign: "center", margin: "0 0 4px" }}>
+                  {submitError}
+                </p>
+              )}
+              {!disabled && (
+                <button
+                  onClick={handleSubmit}
+                  disabled={btnDisabled}
+                  style={{
+                    fontFamily: "var(--font-label, 'Oswald', sans-serif)",
+                    fontSize: 12, fontWeight: 600, letterSpacing: 2,
+                    textTransform: "uppercase",
+                    padding: "9px 14px",
+                    color: btnColor, border: "none",
+                    cursor: btnDisabled ? "default" : "pointer",
+                    borderRadius: 2, background: btnBg, transition: "background 0.3s",
+                    width: "100%",
+                  }}
+                >
+                  {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit Verdict"}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -310,15 +375,12 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
         disabled={!submitted}
         style={{
           fontFamily: "var(--font-label, 'Oswald', sans-serif)",
-          fontSize: 11,
-          letterSpacing: 1,
+          fontSize: 11, letterSpacing: 1,
           textTransform: "uppercase",
-          color: "#ccc",
-          textDecoration: "underline",
+          color: "#ccc", textDecoration: "underline",
           opacity: submitted ? 0.8 : 0,
           pointerEvents: submitted ? "auto" : "none",
-          background: "none",
-          border: "none",
+          background: "none", border: "none",
           cursor: submitted ? "pointer" : "default",
           transition: "opacity 0.4s ease",
         }}
