@@ -293,7 +293,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
           <div style={{ width: "100%", height: 1, background: "#333", marginTop: 16 }} />
 
           {/* Slider and button */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, paddingTop: 16 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, paddingTop: 16, width: "100%" }}>
             {sliderEl}
 
             {submitError && (
