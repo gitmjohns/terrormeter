@@ -75,12 +75,16 @@ body::after {
   background: #0a1a0a;
   border: 2px solid #1a3a1a;
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 0 8px;
   width: 60%;
-  text-align: center;
   margin: 14px auto 0;
   position: relative;
   overflow: hidden;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .tm-lcd-wrap::before {
   content: '';
@@ -99,7 +103,6 @@ body::after {
   font-family: 'VHSGothic', 'Courier New', monospace;
   font-size: clamp(9px, 2.8vw, 14px);
   letter-spacing: 1px;
-  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,8 +232,8 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 6px 20px 0 16px;
+  justify-content: space-evenly;
+  padding: 10px 20px 10px 16px;
 }
 
 /* LCD fills full width when inside the desktop right column */

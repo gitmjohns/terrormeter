@@ -316,7 +316,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
                   borderRadius: 2, background: btnBg, transition: "background 0.3s",
                 }}
               >
-                {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit Verdict"}
+                {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit"}
               </button>
             )}
           </div>
@@ -361,7 +361,7 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
                     width: "100%",
                   }}
                 >
-                  {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit Verdict"}
+                  {submitted ? "Verdict Submitted" : isPending ? "Saving…" : "Submit"}
                 </button>
               )}
             </div>
