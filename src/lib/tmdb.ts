@@ -17,15 +17,15 @@ const SUPERNATURAL_TV_KEYWORD_ID = 10219;
 const MIN_VOTE_COUNT = "10";
 
 // ── Nightly import floors — significantly stricter than browse ────────────────
-const IMPORT_MIN_POPULARITY    = "20";  // filters obscure/short/no-audience titles
-const IMPORT_MIN_VOTE_COUNT    = "50";  // requires meaningful audience engagement
-const IMPORT_MIN_VOTE_AVERAGE  = "4";   // filters truly irredeemable releases
-const IMPORT_MIN_MOVIE_RUNTIME = "70";  // excludes short films (minutes)
-const IMPORT_MIN_TV_RUNTIME    = "20";  // excludes shorts / interstitials (minutes per episode)
+const IMPORT_MIN_POPULARITY             = "20";  // TV floor
+const IMPORT_MIN_THEATRICAL_POPULARITY  = "50";  // theatrical movie floor (higher — major releases only)
+const IMPORT_MIN_VOTE_COUNT             = "50";  // TV vote floor (movies: no minimum — new releases have few votes)
+const IMPORT_MIN_VOTE_AVERAGE           = "4";   // filters truly irredeemable releases
+const IMPORT_MIN_MOVIE_RUNTIME          = "70";  // excludes short films (minutes)
+const IMPORT_MIN_TV_RUNTIME             = "20";  // excludes shorts / interstitials (minutes per episode)
 
-// Release types 2 (theatrical limited) and 3 (theatrical wide) — excludes VOD,
-// direct-to-video, and TV movie releases
-const IMPORT_MOVIE_RELEASE_TYPES = "2|3";
+// Release type 3 (theatrical wide only) — excludes limited, VOD, direct-to-video
+const IMPORT_MOVIE_RELEASE_TYPES = "3";
 
 // Genres excluded from nightly import:
 // 16 = Animation, 99 = Documentary
@@ -117,8 +117,7 @@ export async function fetchNewHorrorReleases(date: string): Promise<{
       "primary_release_date.gte": date,
       "primary_release_date.lte": date,
       "with_runtime.gte": IMPORT_MIN_MOVIE_RUNTIME,
-      "popularity.gte": IMPORT_MIN_POPULARITY,
-      "vote_count.gte": IMPORT_MIN_VOTE_COUNT,
+      "popularity.gte": IMPORT_MIN_THEATRICAL_POPULARITY,
       "vote_average.gte": IMPORT_MIN_VOTE_AVERAGE,
       sort_by: "popularity.desc",
     }),
