@@ -65,7 +65,25 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const { error, count } = await supabase.from("titles").upsert(allPayload, {
+  // Protect manually-edited overviews: if a title already has an overview in
+  // the database, keep it rather than overwriting with TMDB's version.
+  const { data: existingRows } = await supabase
+    .from("titles")
+    .select("tmdb_id, media_type, overview")
+    .in("tmdb_id", allPayload.map((p) => p.tmdb_id));
+
+  const existingOverviewMap = new Map(
+    (existingRows ?? [])
+      .filter((r) => r.overview)
+      .map((r) => [`${r.tmdb_id}:${r.media_type}`, r.overview as string])
+  );
+
+  const protectedPayload = allPayload.map((item) => ({
+    ...item,
+    overview: existingOverviewMap.get(`${item.tmdb_id}:${item.media_type}`) ?? item.overview,
+  }));
+
+  const { error, count } = await supabase.from("titles").upsert(protectedPayload, {
     onConflict: "tmdb_id,media_type",
     ignoreDuplicates: false,
     count: "exact",
