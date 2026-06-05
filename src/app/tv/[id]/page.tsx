@@ -101,7 +101,7 @@ export default async function TVDetailPage({ params }: PageProps) {
                 </div>
                 <h1 className="font-verdict text-4xl sm:text-5xl md:text-6xl text-ghost leading-tight">{title.title}</h1>
                 {title.release_year && <p className="text-muted mt-1 text-sm">{title.release_year}</p>}
-                {title.overview && <p className="text-specter text-sm mt-3 leading-relaxed line-clamp-4">{title.overview}</p>}
+                {title.overview && <p className="text-specter text-sm mt-3 leading-relaxed line-clamp-6">{title.overview}</p>}
                 <div className="mt-3">
                   <WatchlistButton
                     titleId={id}
