@@ -28,9 +28,9 @@ export function getBadgeColor(score: number): string {
 }
 
 // Tiered weighting: fan ratings gain influence as community engagement grows.
-// ratingAvg is on 0-10 scale; criticScore and return value are on 0-100 scale.
+// Both criticScore and ratingAvg are on 0-100 scale; return value is 0-100.
 export function tieredCombinedScore(criticScore: number, ratingAvg: number, ratingCount: number): number {
-  const fanScore = ratingAvg * 10;
+  const fanScore = ratingAvg;
   if (ratingCount < 10)  return criticScore * 0.95 + fanScore * 0.05;
   if (ratingCount < 50)  return criticScore * 0.8 + fanScore * 0.2;
   if (ratingCount < 100) return criticScore * 0.6 + fanScore * 0.4;
