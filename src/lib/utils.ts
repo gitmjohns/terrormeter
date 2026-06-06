@@ -29,13 +29,19 @@ export function getBadgeColor(score: number): string {
 
 // Tiered weighting: fan ratings gain influence as community engagement grows.
 // Both criticScore and ratingAvg are on 0-100 scale; return value is 0-100.
+// Always returns a whole number clamped to [0, 100].
 export function tieredCombinedScore(criticScore: number, ratingAvg: number, ratingCount: number): number {
+  // Zero fan ratings means no fan data at all — rating_avg=0 is a DB default,
+  // not a real score. Return critic score unchanged.
+  if (ratingCount === 0) return Math.max(0, Math.min(100, Math.round(criticScore)));
   const fanScore = ratingAvg;
-  if (ratingCount < 10)  return criticScore * 0.95 + fanScore * 0.05;
-  if (ratingCount < 50)  return criticScore * 0.8 + fanScore * 0.2;
-  if (ratingCount < 100) return criticScore * 0.6 + fanScore * 0.4;
-  if (ratingCount < 500) return criticScore * 0.4 + fanScore * 0.6;
-  return criticScore * 0.2 + fanScore * 0.8;
+  let raw: number;
+  if (ratingCount < 10)  raw = criticScore * 0.95 + fanScore * 0.05;
+  else if (ratingCount < 50)  raw = criticScore * 0.8  + fanScore * 0.2;
+  else if (ratingCount < 100) raw = criticScore * 0.6  + fanScore * 0.4;
+  else if (ratingCount < 500) raw = criticScore * 0.4  + fanScore * 0.6;
+  else                        raw = criticScore * 0.2  + fanScore * 0.8;
+  return Math.max(0, Math.min(100, Math.round(raw)));
 }
 
 export function tmdbImageUrl(

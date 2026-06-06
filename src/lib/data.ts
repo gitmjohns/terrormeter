@@ -14,13 +14,17 @@ export async function getGoats(limit = 20): Promise<Title[]> {
   if (isMockMode()) return MOCK_TITLES.slice(0, limit);
   try {
     const s = await db();
+    // Fetch a wide pool — filter by computed overall score in JS since
+    // PostgREST cannot sort/filter on computed expressions.
     const { data } = await s.from("titles").select("*").eq("media_type", "movie")
-      .gte("critic_score", 85)
+      .gte("critic_score", 70)
       .lt("release_year", 2018)
-      .order("critic_score", { ascending: false })
-      .limit(50);
+      .limit(300);
     if (!data?.length) return [];
-    const shuffled = [...data].sort(() => Math.random() - 0.5);
+    const qualified = (data as Title[]).filter(
+      (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 85
+    );
+    const shuffled = [...qualified].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, limit) as Title[];
   } catch { return []; }
 }
