@@ -148,9 +148,13 @@ export async function getStaffPick(): Promise<Title | null> {
   if (isMockMode()) return MOCK_TITLES[0] ?? null;
   const s = await db();
   const weekNumber = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-  const { data: pool } = await s.from("titles").select("*").eq("media_type", "movie")
-    .gte("critic_score", 85).order("critic_score", { ascending: false }).limit(52);
-  if (!pool?.length) return null;
+  const { data } = await s.from("titles").select("*").eq("media_type", "movie")
+    .gte("critic_score", 70).order("critic_score", { ascending: false }).limit(300);
+  if (!data?.length) return null;
+  const pool = (data as Title[]).filter(
+    (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 85
+  );
+  if (!pool.length) return null;
   return pool[weekNumber % pool.length] as Title;
 }
 
