@@ -31,7 +31,7 @@ export function getBadgeColor(score: number): string {
 // ratingAvg is on 0-10 scale; criticScore and return value are on 0-100 scale.
 export function tieredCombinedScore(criticScore: number, ratingAvg: number, ratingCount: number): number {
   const fanScore = ratingAvg * 10;
-  if (ratingCount < 10)  return criticScore;
+  if (ratingCount < 10)  return criticScore * 0.95 + fanScore * 0.05;
   if (ratingCount < 50)  return criticScore * 0.8 + fanScore * 0.2;
   if (ratingCount < 100) return criticScore * 0.6 + fanScore * 0.4;
   if (ratingCount < 500) return criticScore * 0.4 + fanScore * 0.6;
