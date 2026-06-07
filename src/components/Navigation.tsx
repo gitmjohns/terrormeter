@@ -20,6 +20,7 @@ export function Navigation() {
   const [user, setUser] = useState<User | null>(null);
   const [avatarEmoji, setAvatarEmoji] = useState("💀");
   const [avatarBg, setAvatarBg] = useState("#0a0a0f");
+  const [username, setUsername] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -33,6 +34,7 @@ export function Navigation() {
       const data = await res.json();
       if (data.avatar_emoji) setAvatarEmoji(data.avatar_emoji);
       if (data.avatar_bg)    setAvatarBg(data.avatar_bg);
+      if (data.username)     setUsername(data.username);
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -44,6 +46,7 @@ export function Navigation() {
       setUser(session?.user ?? null);
       if (!session?.user) {
         setAvatarEmoji("💀");
+        setUsername(null);
       } else if (event === "SIGNED_IN") {
         loadProfile();
       }
@@ -169,7 +172,9 @@ export function Navigation() {
 
                 {menuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-tomb border border-shadow rounded-lg shadow-xl py-1 z-50">
-                    <p className="px-4 py-2 text-xs text-muted truncate">{user.email}</p>
+                    {username && (
+                      <p className="px-4 py-2 text-xs text-muted truncate">@{username}</p>
+                    )}
                     <hr className="border-shadow my-1" />
                     <Link href="/profile/me" onClick={() => setMenuOpen(false)}
                       className="block px-4 py-2 text-sm text-specter hover:text-ghost hover:bg-shadow transition-colors">

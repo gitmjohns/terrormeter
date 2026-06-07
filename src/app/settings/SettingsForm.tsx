@@ -17,6 +17,8 @@ export function SettingsForm({ initialUsername, initialEmoji, initialBg, isPrime
   const [username, setUsername] = useState(initialUsername);
   const [usernamePending, setUsernamePending] = useState(false);
   const [usernameMsg, setUsernameMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [showUsernameConfirm, setShowUsernameConfirm] = useState(false);
 
   const [selectedEmoji, setSelectedEmoji] = useState(initialEmoji || DEFAULT_EMOJI);
   const [savedEmoji, setSavedEmoji] = useState(initialEmoji || DEFAULT_EMOJI);
@@ -31,8 +33,7 @@ export function SettingsForm({ initialUsername, initialEmoji, initialBg, isPrime
   const [deletePending, setDeletePending] = useState(false);
   const [deleteMsg, setDeleteMsg] = useState<string | null>(null);
 
-  async function handleUsernameSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleUsernameConfirm() {
     setUsernamePending(true);
     setUsernameMsg(null);
     const res = await fetch("/api/settings/username", {
@@ -42,11 +43,14 @@ export function SettingsForm({ initialUsername, initialEmoji, initialBg, isPrime
       body: JSON.stringify({ username }),
     });
     const data = await res.json();
-    setUsernameMsg(data.error
-      ? { type: "error", text: data.error }
-      : { type: "success", text: "Username updated!" }
-    );
+    if (data.error) {
+      setUsernameMsg({ type: "error", text: data.error });
+    } else {
+      setUsernameMsg({ type: "success", text: "Username updated!" });
+      setEditingUsername(false);
+    }
     setUsernamePending(false);
+    setShowUsernameConfirm(false);
   }
 
   async function handleEmojiSave() {
@@ -167,17 +171,18 @@ export function SettingsForm({ initialUsername, initialEmoji, initialBg, isPrime
         </div>
 
         {/* Username */}
-        <form onSubmit={handleUsernameSubmit} className="space-y-3 pt-2 border-t border-shadow">
+        <div className="space-y-3 pt-2 border-t border-shadow">
           <div>
             <label className={labelCls}>Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className={inputCls}
+              className={`${inputCls} ${!editingUsername ? "opacity-50 cursor-not-allowed" : ""}`}
               minLength={3}
               maxLength={20}
               pattern="[a-zA-Z0-9_]+"
+              disabled={!editingUsername}
               required
             />
           </div>
@@ -186,10 +191,16 @@ export function SettingsForm({ initialUsername, initialEmoji, initialBg, isPrime
               {usernameMsg.text}
             </p>
           )}
-          <button type="submit" disabled={usernamePending} className={saveBtnCls}>
-            {usernamePending ? "Saving…" : "Save Username"}
-          </button>
-        </form>
+          {editingUsername ? (
+            <button type="button" onClick={() => setShowUsernameConfirm(true)} disabled={usernamePending} className={saveBtnCls}>
+              {usernamePending ? "Saving…" : "Save Username"}
+            </button>
+          ) : (
+            <button type="button" onClick={() => setEditingUsername(true)} className={saveBtnCls}>
+              Change Username
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Danger Zone */}
@@ -237,6 +248,31 @@ export function SettingsForm({ initialUsername, initialEmoji, initialBg, isPrime
               </button>
               <button
                 onClick={() => { setShowDeleteModal(false); setDeleteConfirm(""); setDeleteMsg(null); }}
+                className="flex-1 py-2 bg-tomb border border-shadow text-specter hover:text-ghost text-sm font-bold rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Username Change Confirm Modal */}
+      {showUsernameConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-void/80 backdrop-blur-sm px-4">
+          <div className="bg-tomb border border-shadow rounded-2xl p-6 w-full max-w-md space-y-4">
+            <h3 className="font-display text-2xl text-ghost">Change Username</h3>
+            <p className="text-sm text-muted">Are you sure you want to change your username?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleUsernameConfirm}
+                disabled={usernamePending}
+                className="flex-1 py-2 bg-purple-mid hover:bg-purple-light text-ghost text-sm font-bold rounded-lg transition-colors disabled:opacity-60"
+              >
+                {usernamePending ? "Saving…" : "Confirm"}
+              </button>
+              <button
+                onClick={() => setShowUsernameConfirm(false)}
                 className="flex-1 py-2 bg-tomb border border-shadow text-specter hover:text-ghost text-sm font-bold rounded-lg transition-colors"
               >
                 Cancel
