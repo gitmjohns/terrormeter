@@ -289,13 +289,12 @@ export async function getComments(titleId: string, userId?: string): Promise<Com
   })) as Comment[];
 }
 
-export async function getUserRating(titleId: string): Promise<number | null> {
+export async function getUserRating(titleId: string, userId?: string): Promise<number | null> {
   if (isMockMode()) return null;
-  const s = await db();
-  const { data: { user } } = await s.auth.getUser();
-  if (!user) return null;
+  if (!userId) return null;
   // Use service role so RLS cannot block reading the user's own rating.
-  const { data } = await adminDb().from("ratings").select("score").eq("user_id", user.id).eq("title_id", titleId).maybeSingle();
+  const { data } = await adminDb().from("ratings").select("score")
+    .eq("user_id", userId).eq("title_id", titleId).maybeSingle();
   return data?.score ?? null;
 }
 

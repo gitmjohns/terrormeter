@@ -178,6 +178,25 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
     return () => clearInterval(iv);
   }, [submissionCount]);
 
+  // Client-side fallback: if initialScore arrived as null but the component is
+  // not disabled (user is logged in), fetch the rating directly. This guards
+  // against stale App Router router-cache RSC payloads where the server-side
+  // prop was rendered before the rating existed or before auth was resolved.
+  useEffect(() => {
+    if (initialScore !== null || disabled) return;
+    fetch(`/api/rate?titleId=${encodeURIComponent(titleId)}`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { score: number | null } | null) => {
+        if (!data || data.score === null || data.score === undefined) return;
+        submittedScoreRef.current = data.score;
+        setScore(data.score);
+        setSubmitted(true);
+        setDisplayCount(data.score);
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally empty — runs once on mount as a safety net
+
   function handleSubmit() {
     setSubmitError(null);
     startTransition(async () => {

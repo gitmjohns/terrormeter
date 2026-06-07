@@ -32,7 +32,7 @@ export default async function MovieDetailPage({ params }: PageProps) {
 
   const [comments, userRating, similar, watchlistIds, debateThread, profile] = await Promise.all([
     getComments(id, user?.id),
-    getUserRating(id),
+    getUserRating(id, user?.id),
     getSimilarTitles(id, title.subgenres ?? [], title.critic_score, "movie", 8, title.release_year),
     user ? getWatchlistIds() : Promise.resolve(new Set<string>()),
     getDebateThread(id),

@@ -6,6 +6,17 @@ import { ratingLimiter } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
+export async function GET(request: NextRequest) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ score: null });
+  const titleId = request.nextUrl.searchParams.get("titleId");
+  if (!titleId) return NextResponse.json({ score: null });
+  const { data } = await adminDb().from("ratings").select("score")
+    .eq("user_id", user.id).eq("title_id", titleId).maybeSingle();
+  return NextResponse.json({ score: data?.score ?? null });
+}
+
 export async function POST(request: NextRequest) {
   // Verify identity with session client; use service role for the write so
   // RLS cannot block the upsert.
