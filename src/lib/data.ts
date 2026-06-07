@@ -17,12 +17,12 @@ export async function getGoats(limit = 20): Promise<Title[]> {
     // Fetch a wide pool — filter by computed overall score in JS since
     // PostgREST cannot sort/filter on computed expressions.
     const { data } = await s.from("titles").select("*").eq("media_type", "movie")
-      .gte("critic_score", 65)
+      .gte("critic_score", 68)
       .lt("release_year", 2018)
       .limit(300);
     if (!data?.length) return [];
     const qualified = (data as Title[]).filter(
-      (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 80
+      (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 83
     );
     const shuffled = [...qualified].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, limit) as Title[];
