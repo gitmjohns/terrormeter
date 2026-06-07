@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 interface TerrorMeterProps {
   titleId: string;
@@ -182,18 +183,25 @@ export function TerrorMeter({ titleId, initialScore, disabled = false }: TerrorM
   // not disabled (user is logged in), fetch the rating directly. This guards
   // against stale App Router router-cache RSC payloads where the server-side
   // prop was rendered before the rating existed or before auth was resolved.
+  // Confirm a session exists locally first (getSession reads cached storage —
+  // no network round trip) so we skip the /api/rate call — and its server-side
+  // auth.getUser() validation — entirely when there's no logged-in user.
   useEffect(() => {
     if (initialScore !== null || disabled) return;
-    fetch(`/api/rate?titleId=${encodeURIComponent(titleId)}`, { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: { score: number | null } | null) => {
-        if (!data || data.score === null || data.score === undefined) return;
-        submittedScoreRef.current = data.score;
-        setScore(data.score);
-        setSubmitted(true);
-        setDisplayCount(data.score);
-      })
-      .catch(() => {});
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.user) return;
+      fetch(`/api/rate?titleId=${encodeURIComponent(titleId)}`, { credentials: "include" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: { score: number | null } | null) => {
+          if (!data || data.score === null || data.score === undefined) return;
+          submittedScoreRef.current = data.score;
+          setScore(data.score);
+          setSubmitted(true);
+          setDisplayCount(data.score);
+        })
+        .catch(() => {});
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally empty — runs once on mount as a safety net
 
