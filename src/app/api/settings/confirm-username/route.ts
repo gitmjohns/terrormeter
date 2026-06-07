@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { usernameHasBannedWord } from "@/lib/wordFilter";
+import { confirmUsernameLimiter } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,9 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  try { await confirmUsernameLimiter.consume(user.id); }
+  catch { return NextResponse.json({ error: "Too many requests" }, { status: 429 }); }
 
   const body = await request.json();
   const { username } = body as { username: string };

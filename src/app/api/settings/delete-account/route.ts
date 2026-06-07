@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createServerClient } from "@supabase/ssr";
+import { deleteAccountLimiter } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,9 @@ export async function POST(_request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  try { await deleteAccountLimiter.consume(user.id); }
+  catch { return NextResponse.json({ error: "Too many requests" }, { status: 429 }); }
 
   const { data: profile } = await supabase
     .from("profiles")

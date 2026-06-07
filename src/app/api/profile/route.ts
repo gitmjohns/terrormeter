@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { adminDb } from "@/lib/supabase/admin";
 import { usernameHasBannedWord } from "@/lib/wordFilter";
+import { profileUpdateLimiter } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,9 @@ export async function POST() {
   if (authError || !user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+
+  try { await profileUpdateLimiter.consume(user.id); }
+  catch { return NextResponse.json({ error: "Too many requests" }, { status: 429 }); }
 
   const svc = adminDb();
 
