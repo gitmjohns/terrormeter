@@ -184,7 +184,7 @@ export default async function HomePage() {
       <div className="relative w-full h-[23vw] min-h-[93px] max-h-[433px] overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Grindhousebackdrop.png"
+          src="/hero-banner.jpg"
           alt="TerrorMeter"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: "center" }}
