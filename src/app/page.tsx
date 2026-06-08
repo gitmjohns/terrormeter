@@ -193,9 +193,7 @@ export default async function HomePage() {
           className="absolute bottom-0 right-0 w-80 h-48 pointer-events-none"
           style={{ background: "radial-gradient(ellipse at 100% 100%, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 35%, rgba(10,10,10,0.3) 60%, transparent 80%)" }}
         />
-        {/* Red grindhouse overlay */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: "rgba(204,0,0,0.70)" }} />
-        {/* Bottom vignette — fades from page bg to transparent */}
+{/* Bottom vignette — fades from page bg to transparent */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none" style={{ background: "linear-gradient(to top, #0a0a0a 0%, #0a0a0a 5%, rgba(10,10,10,0.6) 35%, transparent 100%)" }} />
         {/* Title + subtitle — vertically and horizontally centered as a group */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
