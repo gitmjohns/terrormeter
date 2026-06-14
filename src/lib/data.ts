@@ -21,7 +21,7 @@ export async function getGoats(limit = 20): Promise<Title[]> {
       .eq("media_type", "movie")
       .gte("critic_score", 68)
       .lt("release_year", 2018)
-      .limit(150);
+      .limit(100);
     if (!data?.length) return [];
     const qualified = (data as Title[]).filter(
       (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 80
