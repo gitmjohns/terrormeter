@@ -21,10 +21,10 @@ export async function getGoats(limit = 20): Promise<Title[]> {
       .eq("media_type", "movie")
       .gte("critic_score", 68)
       .lt("release_year", 2018)
-      .limit(50);
+      .limit(150);
     if (!data?.length) return [];
     const qualified = (data as Title[]).filter(
-      (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 83
+      (t) => tieredCombinedScore(t.critic_score, t.rating_avg, t.rating_count) >= 80
     );
     const shuffled = [...qualified].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, limit) as Title[];
