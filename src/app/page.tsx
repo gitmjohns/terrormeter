@@ -193,26 +193,24 @@ export default async function HomePage() {
         <div className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none" style={{ background: "linear-gradient(to top, #0a0a0a 0%, #0a0a0a 5%, rgba(10,10,10,0.6) 35%, transparent 100%)" }} />
         {/* Title + subtitle — vertically and horizontally centered as a group */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
-          <p style={{
+          <p className="hidden md:flex" style={{
             fontFamily: "var(--font-creepster)",
             color: "#ffffff",
             textShadow: "4px 4px 0px #000000",
             fontSize: "clamp(2.5rem, 9vw, 8rem)",
             lineHeight: 1,
             letterSpacing: "0.02em",
-            display: "flex",
             alignItems: "flex-end",
           }}>
             <span style={{ position: "relative", top: "-9px" }}>TERROR</span>
             <span>METER</span>
           </p>
-          <p style={{
+          <p className="md:ml-[8%]" style={{
             fontFamily: "var(--font-oswald)",
             fontWeight: 300,
             color: "#ffffff",
             fontSize: "clamp(0.72rem, 1.6vw, 1.2rem)",
             letterSpacing: "0.08em",
-            marginLeft: "8%",
           }}>
             Discover horror. Rate from Terrible to Terrifying.
           </p>
