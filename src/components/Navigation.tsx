@@ -21,6 +21,7 @@ export function Navigation() {
   const [avatarEmoji, setAvatarEmoji] = useState("💀");
   const [avatarBg, setAvatarBg] = useState("#0a0a0f");
   const [username, setUsername] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -35,6 +36,7 @@ export function Navigation() {
       if (data.avatar_emoji) setAvatarEmoji(data.avatar_emoji);
       if (data.avatar_bg)    setAvatarBg(data.avatar_bg);
       if (data.username)     setUsername(data.username);
+      setIsAdmin(data.role === "admin");
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -47,6 +49,7 @@ export function Navigation() {
       if (!session?.user) {
         setAvatarEmoji("💀");
         setUsername(null);
+        setIsAdmin(false);
       } else if (event === "SIGNED_IN") {
         loadProfile();
       }
@@ -107,7 +110,7 @@ export function Navigation() {
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-6 flex-shrink-0 ml-8">
-            {navLinks.map((link) => (
+            {navLinks.filter((link) => link.href !== "/feed" || isAdmin).map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -236,7 +239,7 @@ export function Navigation() {
       {/* Mobile: expandable nav links dropdown */}
       {mobileNavOpen && (
         <div className="md:hidden border-t border-shadow bg-crypt/95 pb-2">
-          {navLinks.map((link) => (
+          {navLinks.filter((link) => link.href !== "/feed" || isAdmin).map((link) => (
             <Link
               key={link.href}
               href={link.href}

@@ -10,7 +10,7 @@ export async function GET() {
 
   const { data } = await supabase
     .from("profiles")
-    .select("avatar_emoji, avatar_bg, username")
+    .select("avatar_emoji, avatar_bg, username, role")
     .eq("id", user.id)
     .single();
 
@@ -18,5 +18,6 @@ export async function GET() {
     avatar_emoji: data?.avatar_emoji ?? "💀",
     avatar_bg:    data?.avatar_bg    ?? "#0a0a0f",
     username:     data?.username     ?? null,
+    role:         data?.role         ?? "user",
   });
 }
