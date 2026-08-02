@@ -62,6 +62,7 @@ export interface TMDBMovie {
   release_date: string;
   genre_ids: number[];
   popularity: number;
+  vote_average?: number;
 }
 
 export interface TMDBTVShow {
@@ -73,6 +74,7 @@ export interface TMDBTVShow {
   first_air_date: string;
   genre_ids: number[];
   popularity: number;
+  vote_average?: number;
 }
 
 export interface TMDBGenre {

@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
       ? parseInt(m.release_date.split("-")[0], 10)
       : null,
     genres: m.genre_ids.map((id) => genreMap[id]).filter(Boolean),
+    critic_score: Math.round((m.vote_average ?? 0) * 10),
   }));
 
   const tvPayload = releases.tv.map((s) => ({
@@ -53,6 +54,7 @@ export async function GET(request: NextRequest) {
       ? parseInt(s.first_air_date.split("-")[0], 10)
       : null,
     genres: s.genre_ids.map((id) => genreMap[id]).filter(Boolean),
+    critic_score: Math.round((s.vote_average ?? 0) * 10),
   }));
 
   const allPayload = [...moviesPayload, ...tvPayload];

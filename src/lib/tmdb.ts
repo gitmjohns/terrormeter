@@ -18,7 +18,7 @@ const MIN_VOTE_COUNT = "10";
 
 // ── Nightly import floors — significantly stricter than browse ────────────────
 const IMPORT_MIN_POPULARITY             = "20";  // TV floor
-const IMPORT_MIN_THEATRICAL_POPULARITY  = "150"; // theatrical movie floor (major wide releases only)
+const IMPORT_MIN_THEATRICAL_POPULARITY  = "200"; // theatrical movie floor (major wide releases only)
 const IMPORT_MIN_VOTE_COUNT             = "50";  // TV vote floor (movies: no minimum — new releases have few votes)
 const IMPORT_MIN_VOTE_AVERAGE           = "4";   // filters truly irredeemable releases
 const IMPORT_MIN_MOVIE_RUNTIME          = "70";  // excludes short films (minutes)
